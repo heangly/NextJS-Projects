@@ -1,4 +1,7 @@
-import Link from 'next/link'
+import Button from '../UI/Button'
+import DateIcon from '../ICONS/date-icon'
+import AddressIcon from '../ICONS/address-icon'
+import ArrowRightIcon from '../ICONS/arrow-right-icon'
 import styles from './EventItem.module.css'
 
 const EventItem = ({ id, image, title, date, location }) => {
@@ -18,14 +21,22 @@ const EventItem = ({ id, image, title, date, location }) => {
         <div className={styles.summary}>
           <h2>{title}</h2>
           <div className={styles.date}>
+            <DateIcon />
             <time>{humanReadableDate}</time>
           </div>
           <div className={styles.address}>
+            <AddressIcon />
             <address>{formattedAddres}</address>
           </div>
         </div>
         <div className={styles.actions}>
-          <Link href={exploreLink}>Explore Event</Link>
+          <Button link={exploreLink}>
+            {' '}
+            <span>Explore Event</span>
+            <span className={styles.icon}>
+              <ArrowRightIcon />
+            </span>
+          </Button>
         </div>
       </div>
     </li>
