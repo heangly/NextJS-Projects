@@ -1,40 +1,56 @@
-import { Fragment } from 'react';
-import { useRouter } from 'next/router';
+import { Fragment } from 'react'
 
-import { getEventById } from '../../dummy-data';
-import EventSummary from '../../components/event-detail/event-summary';
-import EventLogistics from '../../components/event-detail/event-logistics';
-import EventContent from '../../components/event-detail/event-content';
-import ErrorAlert from '../../components/ui/error-alert';
+import { getEventById, getFeaturedEvents } from '../../helpers/api-util'
+import EventSummary from '../../components/event-detail/event-summary'
+import EventLogistics from '../../components/event-detail/event-logistics'
+import EventContent from '../../components/event-detail/event-content'
+import ErrorAlert from '../../components/ui/error-alert'
 
-function EventDetailPage() {
-  const router = useRouter();
+export const getStaticPaths = async () => {
+  const events = await getFeaturedEvents()
+  const paths = events.map((event) => ({ params: { eventId: event.id } }))
 
-  const eventId = router.query.eventId;
-  const event = getEventById(eventId);
+  return {
+    paths,
+    fallback: true
+  }
+}
 
-  if (!event) {
+export const getStaticProps = async (context) => {
+  const eventId = context.params.eventId
+  const event = await getEventById(eventId)
+
+  return {
+    props: {
+      selectedEvent: event
+    },
+    revalidate: 30
+  }
+}
+
+function EventDetailPage({ selectedEvent }) {
+  if (!selectedEvent) {
     return (
-      <ErrorAlert>
-        <p>No event found!</p>
-      </ErrorAlert>
-    );
+      <div className='center'>
+        <h1>Loading...</h1>
+      </div>
+    )
   }
 
   return (
     <Fragment>
-      <EventSummary title={event.title} />
+      <EventSummary title={selectedEvent.title} />
       <EventLogistics
-        date={event.date}
-        address={event.location}
-        image={event.image}
-        imageAlt={event.title}
+        date={selectedEvent.date}
+        address={selectedEvent.location}
+        image={selectedEvent.image}
+        imageAlt={selectedEvent.title}
       />
       <EventContent>
-        <p>{event.description}</p>
+        <p>{selectedEvent.description}</p>
       </EventContent>
     </Fragment>
-  );
+  )
 }
 
-export default EventDetailPage;
+export default EventDetailPage
