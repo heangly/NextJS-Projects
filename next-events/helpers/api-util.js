@@ -4,12 +4,14 @@ export async function getAllEvents() {
   )
   const data = await response.json()
 
-  const events = Object.keys(data).map((key) => {
-    return {
+  const events = []
+
+  for (const key in data) {
+    events.push({
       id: key,
       ...data[key]
-    }
-  })
+    })
+  }
 
   return events
 }
