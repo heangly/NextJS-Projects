@@ -1,46 +1,29 @@
 import FeaturedPosts from '../components/homepage/FeaturedPosts'
 import Hero from '../components/homepage/Hero'
+import { getFeaturedPosts } from '../lib/posts-util'
+import Head from 'next/head'
 
-const DUMMY_POSTS = [
-  {
-    slug: 'getting-started-with-nextjs',
-    title: 'Getting Started with NextJS',
-    image: 'getting-started-nextjs.png',
-    excerpt:
-      'NextJs is the React framwork for production - it makes building React apps and sites a breeze',
-    date: '2022-02-10'
-  },
-  {
-    slug: 'getting-started-with-nextjs2',
-    title: 'Getting Started with NextJS',
-    image: 'getting-started-nextjs.png',
-    excerpt:
-      'NextJs is the React framwork for production - it makes building React apps and sites a breeze',
-    date: '2022-02-10'
-  },
-  {
-    slug: 'getting-started-with-nextjs3',
-    title: 'Getting Started with NextJS',
-    image: 'getting-started-nextjs.png',
-    excerpt:
-      'NextJs is the React framwork for production - it makes building React apps and sites a breeze',
-    date: '2022-02-10'
-  },
-  {
-    slug: 'getting-started-with-nextjs4',
-    title: 'Getting Started with NextJS',
-    image: 'getting-started-nextjs.png',
-    excerpt:
-      'NextJs is the React framwork for production - it makes building React apps and sites a breeze',
-    date: '2022-02-10'
+export const getStaticProps = async () => {
+  const featuredPosts = getFeaturedPosts()
+  return {
+    props: {
+      posts: featuredPosts
+    }
   }
-]
+}
 
-const Homepage = () => {
+const Homepage = ({ posts }) => {
   return (
     <>
+      <Head>
+        <title>Heang's Blog</title>
+        <meta
+          name='description'
+          content='I post about programming and web development'
+        />
+      </Head>
       <Hero />
-      <FeaturedPosts posts={DUMMY_POSTS} />
+      <FeaturedPosts posts={posts} />
     </>
   )
 }

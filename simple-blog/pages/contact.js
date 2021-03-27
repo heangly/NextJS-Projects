@@ -1,8 +1,15 @@
+import ContactForm from '../components/contact/ContactForm'
+import Head from 'next/head'
+
 const Contact = () => {
   return (
-    <div>
-      <h1>Home page</h1>
-    </div>
+    <>
+      <Head>
+        <title>Contact Me</title>
+        <meta name='description' content='Send me your messages' />
+      </Head>
+      <ContactForm />
+    </>
   )
 }
 
