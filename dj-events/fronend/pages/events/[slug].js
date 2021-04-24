@@ -1,11 +1,11 @@
 import Layout from '@/components/Layout'
 
-const HomePage = () => {
+const EventPage = () => {
   return (
     <Layout>
-      <h1>Home</h1>
+      <h1>My Event</h1>
     </Layout>
   )
 }
 
-export default HomePage
+export default EventPage
