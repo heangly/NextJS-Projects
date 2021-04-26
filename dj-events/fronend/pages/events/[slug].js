@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { FaPencilAlt, FaTimes } from 'react-icons/fa'
 
 export const getStaticPaths = async () => {
-  const res = await fetch(`${API_URL}/api/events`)
+  const res = await fetch(`${API_URL}/events`)
   const events = await res.json()
   const paths = events.map((event) => ({ params: { slug: event.slug } }))
   return {
@@ -16,7 +16,7 @@ export const getStaticPaths = async () => {
 }
 
 export const getStaticProps = async ({ params: { slug } }) => {
-  const res = await fetch(`${API_URL}/api/events/${slug}`)
+  const res = await fetch(`${API_URL}/events?slug=${slug}`)
   const events = await res.json()
   return { props: events[0], revalidate: 1 }
 }
@@ -37,14 +37,18 @@ const EventPage = (props) => {
           </a>
         </div>
         <span>
-          {props.date} at {props.time}
+          {new Date(props.date).toLocaleDateString('en-us')} at {props.time}
         </span>
 
         <h1>{props.name}</h1>
 
         {props.image && (
           <div className={styles.image}>
-            <Image src={props.image} width={960} height={600} />
+            <Image
+              src={props.image.formats.medium.url}
+              width={960}
+              height={600}
+            />
           </div>
         )}
 
