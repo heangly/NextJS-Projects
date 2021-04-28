@@ -1,9 +1,12 @@
 import Layout from '@/components/Layout'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import { API_URL } from '@/config/index'
 import styles from '@/styles/Event.module.css'
 import Link from 'next/link'
 import Image from 'next/image'
 import { FaPencilAlt, FaTimes } from 'react-icons/fa'
+import { useRouter } from 'next/router'
 
 export const getStaticPaths = async () => {
   const res = await fetch(`${API_URL}/events`)
@@ -22,7 +25,23 @@ export const getStaticProps = async ({ params: { slug } }) => {
 }
 
 const EventPage = (props) => {
-  const deleteEvent = () => {}
+  const router = useRouter()
+
+  const deleteEvent = async (e) => {
+    if (confirm('Are you sure?')) {
+      const res = await fetch(`${API_URL}/events/${props.id}`, {
+        method: 'DELETE'
+      })
+      const data = await res.json()
+
+      if (!res.ok) {
+        toast.error(data.message)
+      } else {
+        router.push('/events')
+      }
+    }
+  }
+
   return (
     <Layout>
       <div className={styles.event}>
@@ -41,6 +60,7 @@ const EventPage = (props) => {
         </span>
 
         <h1>{props.name}</h1>
+        <ToastContainer />
 
         {props.image && (
           <div className={styles.image}>
