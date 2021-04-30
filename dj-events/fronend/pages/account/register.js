@@ -14,6 +14,10 @@ const RegisterPage = () => {
   const [confirmPassword, setConfirmPassword] = useState('')
   const { register, error } = useContext(AuthContext)
 
+  useEffect(() => {
+    error && toast.error(error)
+  }, [])
+
   const handleSubmit = (e) => {
     e.preventDefault()
     password !== confirmPassword && toast.error('Passwords do not match!')

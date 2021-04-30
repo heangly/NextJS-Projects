@@ -9,7 +9,6 @@ const ImageUpload = ({ evtId, imageUploaded }) => {
     e.preventDefault()
     const formData = new FormData()
     formData.append('files', image)
-    console.log(formData)
     formData.append('ref', 'events')
     formData.append('refId', evtId)
     formData.append('field', 'image')
