@@ -1,13 +1,14 @@
-import Layout from '@/components/Layout'
+import { parseCookies } from '@/helpers/index'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import Layout from '@/components/Layout'
 import { API_URL } from '@/config/index'
 import styles from '@/styles/Form.module.css'
 
-const AddEventPage = () => {
+export default function AddEventPage({ token }) {
   const [values, setValues] = useState({
     name: '',
     performers: '',
@@ -25,21 +26,28 @@ const AddEventPage = () => {
 
     // Validation
     const hasEmptyFields = Object.values(values).some(
-      (element) => element.trim() === ''
+      (element) => element === ''
     )
 
-    hasEmptyFields && toast.error('Please fill in all fields')
+    if (hasEmptyFields) {
+      toast.error('Please fill in all fields')
+    }
 
     const res = await fetch(`${API_URL}/events`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(values)
     })
 
     if (!res.ok) {
-      toast.error('Something went wrong')
+      if (res.status === 403 || res.status === 401) {
+        toast.error('No token included')
+        return
+      }
+      toast.error('Something Went Wrong')
     } else {
       const evt = await res.json()
       router.push(`/events/${evt.slug}`)
@@ -56,70 +64,64 @@ const AddEventPage = () => {
       <Link href='/events'>Go Back</Link>
       <h1>Add Event</h1>
       <ToastContainer />
-
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.grid}>
           <div>
             <label htmlFor='name'>Event Name</label>
             <input
-              id='name'
               type='text'
+              id='name'
               name='name'
               value={values.name}
               onChange={handleInputChange}
             />
           </div>
-
           <div>
             <label htmlFor='performers'>Performers</label>
             <input
-              id='performers'
               type='text'
               name='performers'
+              id='performers'
               value={values.performers}
               onChange={handleInputChange}
             />
           </div>
-
           <div>
             <label htmlFor='venue'>Venue</label>
             <input
-              id='venue'
               type='text'
               name='venue'
+              id='venue'
               value={values.venue}
               onChange={handleInputChange}
             />
           </div>
-
           <div>
             <label htmlFor='address'>Address</label>
             <input
-              id='address'
               type='text'
               name='address'
+              id='address'
               value={values.address}
               onChange={handleInputChange}
             />
           </div>
-
           <div>
             <label htmlFor='date'>Date</label>
             <input
-              id='date'
               type='date'
               name='date'
+              id='date'
               value={values.date}
               onChange={handleInputChange}
             />
           </div>
-
           <div>
             <label htmlFor='time'>Time</label>
             <input
-              id='time'
               type='text'
               name='time'
+              id='time'
               value={values.time}
               onChange={handleInputChange}
             />
@@ -129,9 +131,9 @@ const AddEventPage = () => {
         <div>
           <label htmlFor='description'>Event Description</label>
           <textarea
-            id='description'
-            type='date'
+            type='text'
             name='description'
+            id='description'
             value={values.description}
             onChange={handleInputChange}
           ></textarea>
@@ -143,4 +145,12 @@ const AddEventPage = () => {
   )
 }
 
-export default AddEventPage
+export async function getServerSideProps({ req }) {
+  const { token } = parseCookies(req)
+
+  return {
+    props: {
+      token
+    }
+  }
+}
