@@ -1,13 +1,34 @@
+import { Fragment } from 'react';
 import Head from 'next/head';
-import styles from '../styles/Home.module.css';
 
-export default function Home() {
+import FeaturedPosts from '../components/home-page/featured-posts';
+import Hero from '../components/home-page/hero';
+import { getFeaturedPosts } from '../lib/posts-util';
+
+function HomePage(props) {
   return (
-    <div className='page-container'>
-      <div className={styles.main}>
-        <h1>Next.js News App</h1>
-        <h3>Your one stop shop for the lastest news article</h3>
-      </div>
-    </div>
+    <Fragment>
+      <Head>
+        <title>Max' Blog</title>
+        <meta
+          name='description'
+          content='I post about programming and web development.'
+        />
+      </Head>
+      <Hero />
+      <FeaturedPosts posts={props.posts} />
+    </Fragment>
   );
 }
+
+export function getStaticProps() {
+  const featuredPosts = getFeaturedPosts();
+
+  return {
+    props: {
+      posts: featuredPosts,
+    },
+  };
+}
+
+export default HomePage;
