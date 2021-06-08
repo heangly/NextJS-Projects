@@ -1,19 +1,19 @@
-import { useRef, useState } from 'react';
-import classes from './new-comment.module.css';
+import { useRef, useState } from 'react'
+import classes from './new-comment.module.css'
 
 function NewComment(props) {
-  const [isInvalid, setIsInvalid] = useState(false);
+  const [isInvalid, setIsInvalid] = useState(false)
 
-  const emailInputRef = useRef();
-  const nameInputRef = useRef();
-  const commentInputRef = useRef();
+  const emailInputRef = useRef()
+  const nameInputRef = useRef()
+  const commentInputRef = useRef()
 
-  function sendCommentHandler(event) {
-    event.preventDefault();
+  const sendCommentHandler = (e) => {
+    e.preventDefault()
 
-    const enteredEmail = emailInputRef.current.value;
-    const enteredName = nameInputRef.current.value;
-    const enteredComment = commentInputRef.current.value;
+    const enteredEmail = emailInputRef.current.value
+    const enteredName = nameInputRef.current.value
+    const enteredComment = commentInputRef.current.value
 
     if (
       !enteredEmail ||
@@ -24,19 +24,19 @@ function NewComment(props) {
       !enteredComment ||
       enteredComment.trim() === ''
     ) {
-      setIsInvalid(true);
-      return;
+      setIsInvalid(true)
+      return
     }
 
     props.onAddComment({
       email: enteredEmail,
       name: enteredName,
-      text: enteredComment,
-    });
+      text: enteredComment
+    })
   }
 
   return (
-    <form className={classes.form}>
+    <form className={classes.form} onSubmit={sendCommentHandler}>
       <div className={classes.row}>
         <div className={classes.control}>
           <label htmlFor='email'>Your email</label>
@@ -54,7 +54,7 @@ function NewComment(props) {
       {isInvalid && <p>Please enter a valid email address and comment!</p>}
       <button>Submit</button>
     </form>
-  );
+  )
 }
 
-export default NewComment;
+export default NewComment
