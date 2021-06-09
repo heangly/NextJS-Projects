@@ -1,24 +1,46 @@
-import { useRef } from 'react'
+import { useRef, useContext } from 'react'
+import NotificationContext from '../../store/notification-context'
 import classes from './newsletter-registration.module.css'
 
 function NewsletterRegistration() {
   const emailInputRef = useRef()
+  const { showNotification, hideNotification } = useContext(NotificationContext)
 
   const registrationHandler = async (e) => {
     e.preventDefault()
+    showNotification({
+      title: 'Signing up...',
+      message: 'Registering for newsletter',
+      status: 'pending'
+    })
     const emailInput = emailInputRef.current.value
 
-    const config = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email: emailInput })
-    }
+    try {
+      const config = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: emailInput })
+      }
 
-    const rawData = await fetch('/api/newsletter', config)
-    const data = await rawData.json()
-    emailInputRef.current.value = ''
+      const rawData = await fetch('/api/newsletter', config)
+      await rawData.json()
+
+      showNotification({
+        title: 'Success!.',
+        message: 'Successfully registered for newsletter',
+        status: 'success'
+      })
+
+      emailInputRef.current.value = ''
+    } catch (error) {
+      showNotification({
+        title: 'Error',
+        message: error.message || 'Something went wrong!',
+        status: 'error'
+      })
+    }
   }
 
   return (
